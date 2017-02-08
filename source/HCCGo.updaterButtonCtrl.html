@@ -1,0 +1,124 @@
+<!doctype html><html>  <head>    <meta charset="utf-8">    <base href="../">    <title>JSDoc: source : updaterService.js</title>    <link href="css/prettify-tomorrow.css" type="text/css" rel="stylesheet">    <link href="css/site.css" type="text/css" rel="stylesheet">  </head>  <body ng-app="">    <nav id="toc">      <input placeholder="Filter" id="filter-input" class="col12 block field" type="text">      <div class="nav-wrapper">      <h2><a href="index.html">Index</a></h2>      <ul class="module">        <!-- ____o -->        <h2 class="module">          <a chref="" ng-click="module____o = !module____o">            module: HCCGo          </a>          <i ng-cloak="" ng-show="module____o">+</i>        </h2>        <li id="HCCGo" ng-hide="module____o">          <ul class="group">            <h2>              <a href="" ng-click="____oservice = !____oservice">                service              </a>              <i ng-cloak="" ng-show="____oservice">+</i>            </h2>            <ul ng-hide="____oservice">              <li>                <a href="HCCGo.dataUsageService.html">dataUsageService</a>              </li><li>                <a href="HCCGo.dbService.html">dbService</a>              </li><li>                <a href="HCCGo.filePathService.html">filePathService</a>              </li><li>                <a href="HCCGo.jobStatusService.html">jobStatusService</a>              </li><li>                <a href="HCCGo.notifierService.html">notifierService</a>              </li><li>                <a href="HCCGo.updaterService.html">updaterService</a>              </li>            </ul>          </ul><ul class="group">            <h2>              <a href="" ng-click="____ocontroller = !____ocontroller">                controller              </a>              <i ng-cloak="" ng-show="____ocontroller">+</i>            </h2>            <ul ng-hide="____ocontroller">              <li>                <a href="HCCGo.updaterButtonCtrl.html">updaterButtonCtrl</a>              </li>            </ul>          </ul>        </li>      </ul>      </div>    </nav>    <div id="content" class="page-wrap">      <h1 class="title">        source : updaterService.js      </h1>      <div id="main" class="big-container">        <!-- source code html -->        <article>          <pre class="prettyprint source linenums"><code>
+updaterModule = angular.module('updaterModule', []);
+/**
+ * @memberof HCCGo
+ * @ngdoc service
+ * @class updaterService
+ * @param $log {service} Logging for angularjs
+ * @param $rootScope {service} Root Scope
+ */
+var updaterService = function($log, $rootScope) {
+  const {ipcRenderer} = require('electron');
+  var updateDetails = null;
+  var updateAvailable = false;
+  /**
+   * Start the updater and sets listeners for the update events.
+   * @method start
+   * @memberof HCCGo.updaterService
+   */
+  this.start = function() {
+    $log.debug("Starting updater");
+    ipcRenderer.on('updater-error', function(event, arg) {
+      $log.error("Received updater-error event: " + arg.msg);
+    });
+    ipcRenderer.on('checking-for-update', function(event, arg) {
+      $log.debug("Received checking-for-update event");
+    });
+    ipcRenderer.on('update-available', function(event, arg) {
+      $log.debug("Received update-available event");
+    });
+    ipcRenderer.on('update-not-available', function(event, arg) {
+      $log.debug("Received update-not-available event");
+    });
+    ipcRenderer.on('update-downloaded', function(event, arg) {
+      $log.debug("Received update-downloaded event");
+      $log.debug("Release available: " + arg.releaseName);
+      $rootScope.$broadcast('update:available', arg);
+      updateAvailable = true;
+      updateDetails = arg;
+    });
+  };
+  /**
+   * Update and restart HCCGo
+   * @memberof HCCGo.updaterService
+   * @function updateRestart
+   */
+  this.updateRestart = function() {
+    $log.debug("Restarting and updating!");
+    ipcRenderer.send('updateRestart');
+  }
+  /**
+   * Check if there is an update available
+   * @return {bool} True if there is an update available, false otherwise.
+   * @memberof HCCGo.updaterService
+   * @function hasUpdate
+   */
+  this.hasUpdate = function() {
+    return updateAvailable;
+  }
+  /**
+   * Get the details for the update
+   * @return {UpdateDeatils} Deatils of the update
+   * @memberof HCCGo.updaterService
+   * @function getUpdateDetails
+   */
+  this.getUpdateDetails = function() {
+    return updateDetails;
+  }
+}
+updaterModule.service('updaterService', [ '$log', '$rootScope', updaterService]);
+/**
+ * Controller for an update Button.
+ * @example 
+ * &lt;li ng-controller="updateButtonCtrl" ng-show="updateAvailable">
+ *   &lt;button type="button" 
+ *   ng-click="updateDialog()"
+ *   class="btn btn-info navbar-btn"
+ *   ng-show="updateAvailable">
+ *   Update Available
+ *   &lt;/button>
+ * &lt;/li>
+ * @memberof HCCGo
+ * @ngdoc controller
+ * @class updaterButtonCtrl
+ * @param $scope {service} Local controller scope
+ * @param updaterService {service} Updater Service
+ * @param $location {service} Location service
+ */
+var updaterButtonCtrl = function($scope, updaterService, $location) {  
+  /**
+   * Function called when update is detected
+   * @private 
+   * @memberof HCCGo.updaterButtonCtrl
+   */
+   var setUpdate = function(updateDetails) {
+      $scope.update = updateDetails
+      $scope.updateAvailable = true;
+   }
+   $scope.$on('update:available', function(event, updateDetails) {
+      $scope.$apply(function() {
+        setUpdate(updateDetails);
+      });
+   });
+   if (updaterService.hasUpdate()) {
+      setUpdate(updaterService.updateDetails);
+   }
+   /**
+    * Restart and update when the button is pressed
+    * @function restartUpdate
+    * @memberof HCCGo.updaterButtonCtrl
+    */
+   $scope.restartUpdate = function() {
+      updaterService.updateRestart();
+   }
+   /**
+    * Change the view to the update dialog
+    * @function updateDialog
+    * @memberof HCCGo.updaterButtonCtrl
+    */ 
+   $scope.updateDialog = function() {
+      $location.path("/update");
+   }
+}
+updaterModule.controller('updateButtonCtrl', ['$scope', 'updaterService', '$location', updaterButtonCtrl]);
+</code></pre>        </article>        <!-- index.html -->        <!-- class files -->      </div>      <footer style="clear:both">        Documentation generated by        <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a>        using        <a href="https://github.com/allenhwkim/angular-jsdoc">Angular-JSDoc template</a>      </footer>    </div>    <script src="js/prettify.js"></script>    <script src="js/angular.min.js"></script>    <script src="js/site.js"></script>    <!--%= prettyJson %-->    <script>      prettyPrint();      var lineNo = window.location.hash.match(/#line([0-9]+)$/);      lineNo && document.querySelector("ol li:nth-child("+(lineNo[1])+")").scrollIntoView();    </script>  </body></html>

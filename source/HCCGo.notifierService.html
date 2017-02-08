@@ -1,0 +1,122 @@
+<!doctype html><html>  <head>    <meta charset="utf-8">    <base href="../">    <title>JSDoc: source : NotifierService.js</title>    <link href="css/prettify-tomorrow.css" type="text/css" rel="stylesheet">    <link href="css/site.css" type="text/css" rel="stylesheet">  </head>  <body ng-app="">    <nav id="toc">      <input placeholder="Filter" id="filter-input" class="col12 block field" type="text">      <div class="nav-wrapper">      <h2><a href="index.html">Index</a></h2>      <ul class="module">        <!-- ____o -->        <h2 class="module">          <a chref="" ng-click="module____o = !module____o">            module: HCCGo          </a>          <i ng-cloak="" ng-show="module____o">+</i>        </h2>        <li id="HCCGo" ng-hide="module____o">          <ul class="group">            <h2>              <a href="" ng-click="____oservice = !____oservice">                service              </a>              <i ng-cloak="" ng-show="____oservice">+</i>            </h2>            <ul ng-hide="____oservice">              <li>                <a href="HCCGo.dataUsageService.html">dataUsageService</a>              </li><li>                <a href="HCCGo.dbService.html">dbService</a>              </li><li>                <a href="HCCGo.filePathService.html">filePathService</a>              </li><li>                <a href="HCCGo.jobStatusService.html">jobStatusService</a>              </li><li>                <a href="HCCGo.notifierService.html">notifierService</a>              </li><li>                <a href="HCCGo.updaterService.html">updaterService</a>              </li>            </ul>          </ul><ul class="group">            <h2>              <a href="" ng-click="____ocontroller = !____ocontroller">                controller              </a>              <i ng-cloak="" ng-show="____ocontroller">+</i>            </h2>            <ul ng-hide="____ocontroller">              <li>                <a href="HCCGo.updaterButtonCtrl.html">updaterButtonCtrl</a>              </li>            </ul>          </ul>        </li>      </ul>      </div>    </nav>    <div id="content" class="page-wrap">      <h1 class="title">        source : NotifierService.js      </h1>      <div id="main" class="big-container">        <!-- source code html -->        <article>          <pre class="prettyprint source linenums"><code>
+notifierModule = angular.module('NotifierModule', ['toastr'])
+/**
+ * @memberof HCCGo
+ * @ngdoc service
+ * @class notifierService
+ * @param $log {service} AngularJS Logging Service
+ * @param $q {service} AngularJS Promise service
+ * @param $routeParams {service} AngularJS route parameters
+ * @param toastr {service} Toastr notifications
+ */
+notifierModule.factory('notifierService',['$log', '$q', '$routeParams', 'toastr',
+                                           function($log, $q, $routeParams, toastr) {
+   const {ipcRenderer} = require('electron');
+   const notifier = require('node-notifier');
+   var path = require('path');
+   var fs = require('fs');
+   const toastrOptions = {closeButton: true,
+                          timeOut: 5000,
+                          extendedTimeOut: 5000,
+                          progressBar: true};
+	 /**
+	 * Get window focus status
+	 * To notify user of application dependent on window focus
+	 * @memberof HCCGo.notifierService
+	 * @function getWinFocus
+	 * @returns {Promise} Promise when the focus is established
+	 * 
+	 */
+  var getWinFocus = function() {
+    var deferred = $q.defer();
+	  ipcRenderer.on('focus-check-message', (event, arg) => {
+          $log.debug("Window is focused: " + arg);
+		  deferred.resolve(arg);
+      });
+      ipcRenderer.send('focus-check-reply', 'ping');
+	return deferred.promise;
+  }
+  /**
+	 * Pop a success message
+	 * @param {String} msg - Message to display 
+	 * @param {String} title - Title of message
+	 * @memberof HCCGo.notifierService
+	 * @function success
+	 */
+  var success = function(msg, title) {
+    getWinFocus().then(function (response) {
+      if (response) {
+	    toastr.success(msg, title, toastrOptions);
+	    } else {
+	    notifier.notify({
+	      title: title,
+  		  message: msg,
+  		  icon: path.join(__dirname, '../icons/HCCGo.png'),
+  		  sound: false,
+  		  wait: false
+	    }, function (err, response) {
+	      if (err) {
+		    $log.debug(err);
+		  }
+	    })
+	  }
+	 });
+  }
+	/**
+	 * Pop a warning message
+	 * @param {String} msg - Message to display 
+	 * @memberof HCCGo.notifierService
+	 * @function warning
+	 */
+  var warning = function(msg) {
+    getWinFocus().then(function (response) {
+      if (response) {
+	    toastr.warning(msg, toastrOptions);
+	  } else {
+	    notifier.notify({
+	      title: 'Warning!',
+		  message: msg,
+		  icon: path.join(__dirname, '../icons/HCCGo.png'),
+		  sound: false,
+		  wait: false
+	    }, function (err, response) {
+	      if (err) {
+		    $log.debug(err);
+		  }
+	    })
+	  }
+	});
+  }
+	/**
+	 * Pop a error message
+	 * @param {String} msg - Message to display
+	 * @param {String} title - Title of message
+	 * @memberof HCCGo.notifierService
+	 * @function error
+	 */
+  var error = function(msg, title) {
+    getWinFocus().then(function (response) {
+      if (response) {
+	    toastr.error(msg, title, toastrOptions);
+	  } else {
+	    notifier.notify({
+	      title: title,
+		  message: msg,
+		  icon: path.join(__dirname, '../icons/HCCGo.png'),
+		  sound: false,
+		  wait: false
+	    }, function (err, response) {
+	      if (err) {
+		    $log.debug(err);
+		  }
+	    })
+	  }
+	});
+  }
+  return {
+  success: success,
+  warning: warning,
+  error: error
+  }
+}]);
+</code></pre>        </article>        <!-- index.html -->        <!-- class files -->      </div>      <footer style="clear:both">        Documentation generated by        <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a>        using        <a href="https://github.com/allenhwkim/angular-jsdoc">Angular-JSDoc template</a>      </footer>    </div>    <script src="js/prettify.js"></script>    <script src="js/angular.min.js"></script>    <script src="js/site.js"></script>    <!--%= prettyJson %-->    <script>      prettyPrint();      var lineNo = window.location.hash.match(/#line([0-9]+)$/);      lineNo && document.querySelector("ol li:nth-child("+(lineNo[1])+")").scrollIntoView();    </script>  </body></html>
