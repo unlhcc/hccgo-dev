@@ -3,7 +3,7 @@ connectionModule = angular.module('ConnectionServiceModule', [])
 /**
  * The connectionService is used throughout the entire app, from filetransfer to login authentication.
  * Uses a mixture of protocols to accomplish these tasks.
- * 
+ *
  * @ngdoc service
  * @memberof HCCGo
  * @class connectionService
@@ -17,7 +17,7 @@ connectionModule = angular.module('ConnectionServiceModule', [])
  * @requires fs
  * @requires ssh2
  */
-connectionModule.factory('connectionService',['$log', '$q', '$routeParams', '$location', 'notifierService', function($log, $q, $routeParams, $location, notifierService) {
+connectionModule.factory('connectionService',['$log', '$q', '$routeParams', '$location', 'notifierService', 'analyticsService', function($log, $q, $routeParams, $location, notifierService, analyticsService) {
    var connectionList = {crane: null,
                          tusker: null,
                          sandhills: null,
@@ -616,9 +616,11 @@ connectionModule.factory('connectionService',['$log', '$q', '$routeParams', '$lo
             }],
             function(err) {
                 if(err) {
+                    analyticsService.event('file upload', 'fail');
                     $log.debug(err);
                     error(err);
                 } else {
+				    analyticsService.event('file upload', 'success', '', sizeTotal);
                     finished();
                 }
        });
@@ -795,9 +797,11 @@ connectionModule.factory('connectionService',['$log', '$q', '$routeParams', '$lo
             }],
             function(err) {
                 if(err) {
+                    analyticsService.event('file download', 'fail');
                     $log.debug(err);
                     error(err);
                 } else {
+				    analyticsService.event('file download', 'success', '', sizeTotal);
                     finished();
                 }
        });
