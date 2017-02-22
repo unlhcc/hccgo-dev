@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>jobStatusService - Documentation</title>
+    <title>NotifierService.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -28,336 +28,150 @@
 
 <div id="main">
     
-    <h1 class="page-title">jobStatusService</h1>
+    <h1 class="page-title">NotifierService.js</h1>
     
 
     
 
 
 
-
-<section>
-
-<header>
     
-        <h2>
-        jobStatusService
-        </h2>
-        
-    
-</header>
-
-<article>
-    <div class="container-overview">
-    
-        
-
-    
-
-    <h4 class="name" id="jobStatusService"><span class="type-signature"></span>new jobStatusService<span class="signature">()</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-<div class="description">
-    <p>The jobStatusService allows for periodic loading of the status of jobs that comes from the clusters.</p>
-<p>A Promise with the data is returned, which is then set properly within the controller</p>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jobStatusService.js.html">jobStatusService.js</a>, <a href="jobStatusService.js.html#line3">line 3</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    </div>
-
-    
-
-    
-
-    
-
-     
-
-    
-
-    
-
-    
-        <h3 class="subsection-title">Methods</h3>
-
-        
-            
-
-    
-
-    <h4 class="name" id=".refreshDatabase"><span class="type-signature">(static) </span>refreshDatabase<span class="signature">(clusterInterface, clusterId, force)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
-
-    
-
-
-
-<div class="description">
-    <p>Makes asynchronous calls to check for job statuses within the database</p>
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>clusterInterface</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="global.html#GenericClusterInterface">GenericClusterInterface</a></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Used to grab uncompleted jobs from the cluster</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>clusterId</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">integer</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Unique ID of the cluster for querying the database</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>force</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Flag denoting if the user wants to force update the database</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jobStatusService.js.html">jobStatusService.js</a>, <a href="jobStatusService.js.html#line19">line 19</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    <p>Promise object to be resolved in the controller</p>
-</div>
-
-
-
-<dl class="param-type">
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Promise</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-        
-    
-
-    
-
-    
-</article>
-
-</section>
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>
+notifierModule = angular.module('NotifierModule', ['toastr'])
+
+
+/**
+ * @memberof HCCGo
+ * @ngdoc service
+ * @class notifierService
+ * @param $log {service} AngularJS Logging Service
+ * @param $q {service} AngularJS Promise service
+ * @param $routeParams {service} AngularJS route parameters
+ * @param toastr {service} Toastr notifications
+ */
+notifierModule.factory('notifierService',['$log', '$q', '$routeParams', 'toastr',
+                                           function($log, $q, $routeParams, toastr) {
+
+   const {ipcRenderer} = require('electron');
+   const notifier = require('node-notifier');
+   var path = require('path');
+   var fs = require('fs');
+
+   const toastrOptions = {closeButton: true,
+                          timeOut: 5000,
+                          extendedTimeOut: 5000,
+                          progressBar: true};
+
+	 /**
+	 * Get window focus status
+	 * To notify user of application dependent on window focus
+	 * @memberof HCCGo.notifierService
+	 * @function getWinFocus
+	 * @returns {Promise} Promise when the focus is established
+	 * 
+	 */
+  var getWinFocus = function() {
+    var deferred = $q.defer();
+	  ipcRenderer.on('focus-check-message', (event, arg) => {
+          $log.debug("Window is focused: " + arg);
+		  deferred.resolve(arg);
+      });
+      ipcRenderer.send('focus-check-reply', 'ping');
+	return deferred.promise;
+  }
+
+  /**
+	 * Pop a success message
+	 * @param {String} msg - Message to display 
+	 * @param {String} title - Title of message
+	 * @memberof HCCGo.notifierService
+	 * @function success
+	 */
+  var success = function(msg, title) {
+    getWinFocus().then(function (response) {
+      if (response) {
+	    toastr.success(msg, title, toastrOptions);
+	    } else {
+	    notifier.notify({
+	      title: title,
+  		  message: msg,
+  		  icon: path.join(__dirname, '../icons/HCCGo.png'),
+  		  sound: false,
+  		  wait: false
+	    }, function (err, response) {
+	      if (err) {
+		    $log.debug(err);
+		  }
+	    })
+	  }
+	 });
+  }
+	
+	/**
+	 * Pop a warning message
+	 * @param {String} msg - Message to display 
+	 * @memberof HCCGo.notifierService
+	 * @function warning
+	 */
+  var warning = function(msg) {
+    getWinFocus().then(function (response) {
+      if (response) {
+	    toastr.warning(msg, toastrOptions);
+	  } else {
+	    notifier.notify({
+	      title: 'Warning!',
+		  message: msg,
+		  icon: path.join(__dirname, '../icons/HCCGo.png'),
+		  sound: false,
+		  wait: false
+	    }, function (err, response) {
+	      if (err) {
+		    $log.debug(err);
+		  }
+	    })
+	  }
+	});
+  }
+
+	/**
+	 * Pop a error message
+	 * @param {String} msg - Message to display
+	 * @param {String} title - Title of message
+	 * @memberof HCCGo.notifierService
+	 * @function error
+	 */
+  var error = function(msg, title) {
+    getWinFocus().then(function (response) {
+      if (response) {
+	    toastr.error(msg, title, toastrOptions);
+	  } else {
+	    notifier.notify({
+	      title: title,
+		  message: msg,
+		  icon: path.join(__dirname, '../icons/HCCGo.png'),
+		  sound: false,
+		  wait: false
+	    }, function (err, response) {
+	      if (err) {
+		    $log.debug(err);
+		  }
+	    })
+	  }
+	});
+  }
+
+  return {
+  success: success,
+  warning: warning,
+  error: error
+  }
+
+}]);
+</code></pre>
+        </article>
+    </section>
 
 
 

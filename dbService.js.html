@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>jobStatusService - Documentation</title>
+    <title>dbService.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -28,336 +28,113 @@
 
 <div id="main">
     
-    <h1 class="page-title">jobStatusService</h1>
+    <h1 class="page-title">dbService.js</h1>
     
 
     
 
 
 
-
-<section>
-
-<header>
     
-        <h2>
-        jobStatusService
-        </h2>
-        
-    
-</header>
-
-<article>
-    <div class="container-overview">
-    
-        
-
-    
-
-    <h4 class="name" id="jobStatusService"><span class="type-signature"></span>new jobStatusService<span class="signature">()</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-<div class="description">
-    <p>The jobStatusService allows for periodic loading of the status of jobs that comes from the clusters.</p>
-<p>A Promise with the data is returned, which is then set properly within the controller</p>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jobStatusService.js.html">jobStatusService.js</a>, <a href="jobStatusService.js.html#line3">line 3</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    </div>
-
-    
-
-    
-
-    
-
-     
-
-    
-
-    
-
-    
-        <h3 class="subsection-title">Methods</h3>
-
-        
-            
-
-    
-
-    <h4 class="name" id=".refreshDatabase"><span class="type-signature">(static) </span>refreshDatabase<span class="signature">(clusterInterface, clusterId, force)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
-
-    
-
-
-
-<div class="description">
-    <p>Makes asynchronous calls to check for job statuses within the database</p>
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>clusterInterface</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="global.html#GenericClusterInterface">GenericClusterInterface</a></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Used to grab uncompleted jobs from the cluster</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>clusterId</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">integer</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Unique ID of the cluster for querying the database</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>force</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Flag denoting if the user wants to force update the database</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jobStatusService.js.html">jobStatusService.js</a>, <a href="jobStatusService.js.html#line19">line 19</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    <p>Promise object to be resolved in the controller</p>
-</div>
-
-
-
-<dl class="param-type">
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Promise</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-        
-    
-
-    
-
-    
-</article>
-
-</section>
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>dbService = angular.module('dbService', []);
+
+/**
+ * The dbService provides access to the various DB's.  Additionally,
+ they allow the loading of the DB's only once, which stops any race conditions of trying to open the DB more than once.
+ *
+ * The DBs returned by the `dbService` are all nedb Databases.
+ *
+ * Documentation on [Nedb](https://github.com/louischatriot/nedb).
+ *
+ * @ngdoc service
+ * @memberof HCCGo
+ * @class dbService
+ */
+dbService.service('dbService', ['filePathService', '$log', '$q', function(filePathService, $log, $q) {
+
+  const DataStore = require('nedb');
+  var path = require('path');
+  var dataPath = filePathService.getDataPath();
+  var jobHistory = path.join(__dirname, 'data/jobHistory.json');
+  var jobHistoryPath = filePathService.getJobHistory();
+  var jobHistoryDB = $q.defer();
+  var submittedJobsPath = filePathService.getSubmittedJobs();
+  var submittedJobsDB = $q.defer();
+
+  // Check if app data folder is there, if not, create one with default json file
+  var fs = require('fs');
+  fs.exists(dataPath, function(exists) {
+    if(!exists) {
+      // folder doesn't exist
+      fs.mkdir(dataPath, function() {
+          // create default files
+          fs.createWriteStream(jobHistoryPath);
+          jobHistoryDB.resolve(new DataStore({ filename: jobHistoryPath, autoload: true }));
+          $.getJSON(jobHistory, function(json) {
+            jobHistoryDB.insert(json.jobs[0], function(err, newDoc) {
+              if(err) $log.error(err);
+            });
+          });
+          fs.createWriteStream(submittedJobsPath);
+          submittedJobsDB.resolve(new DataStore({ filename: submittedJobsPath, autoload: true }));
+      });
+    }
+    else {
+      // folder does exist
+      fs.exists(jobHistoryPath, function(fileExists) {
+        if(!fileExists) {
+          // jobhistory file doesn't exist
+          fs.createWriteStream(jobHistoryPath);
+          jobHistoryDB.resolve(new DataStore({ filename: jobHistoryPath, autoload: true }));
+          $.getJSON(jobHistory, function(json) {
+            jobHistoryDB.insert(json.jobs[0], function(err, newDoc) {
+              if(err) $log.error(err);
+            });
+          });
+        }
+        else {
+          jobHistoryDB.resolve(new DataStore({ filename: jobHistoryPath, autoload: true }));
+        }
+      });
+      fs.exists(submittedJobsPath, function(fileExists) {
+        if(!fileExists) {
+          // jobsubmission file doesn't exist
+          fs.createWriteStream(submittedJobsPath);
+        }
+        submittedJobsDB.resolve(new DataStore({ filename: submittedJobsPath, autoload: true }));
+      });
+    }
+  });
+
+  return {
+
+    /**
+     * Get the Job History DB reference.
+     * @method getJobHistoryDB
+     * @memberof HCCGo.dbService
+     * @returns {nedb} Nedb (reference) object to query.
+     */
+    getJobHistoryDB: function() {
+      return jobHistoryDB.promise;
+    },
+
+    /**
+     * Get the Submitted jobs DB reference.
+     * @method getSubmittedJobsDB
+     * @memberof HCCGo.dbService
+     * @returns {nedb} Nedb (reference) object to query.
+     */
+    getSubmittedJobsDB: function() {
+      return submittedJobsDB.promise;
+    }
+  };
+
+}]);
+</code></pre>
+        </article>
+    </section>
 
 
 

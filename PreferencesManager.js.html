@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>jobStatusService - Documentation</title>
+    <title>PreferencesManager.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -28,336 +28,182 @@
 
 <div id="main">
     
-    <h1 class="page-title">jobStatusService</h1>
+    <h1 class="page-title">PreferencesManager.js</h1>
     
 
     
 
 
 
-
-<section>
-
-<header>
     
-        <h2>
-        jobStatusService
-        </h2>
-        
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>
+
+preferencesModule = angular.module('PreferencesManager', [])
+
+preferencesModule.factory('preferencesManager',['$log', '$q', 'filePathService', function($log, $q, filePathService) {
+  
+  var clustersDefer;
+  var preferencesDefer;
+  var preferencePath = filePathService.getPreferencePath();
+  var fs = require("fs");
+  
+  /**
+     * Initializes and reads preferences.json and reads clusters.json, resolves promises for method execution
+     * @method init
+     * @memberof PreferencesManager
+     */
+    var init = function() {
+    // Read in the clusters file
+    readClustersDefer = $q.defer();
+    clustersDefer = readClustersDefer.promise;
+    var path = require("path");
+    var clusters = path.join(__dirname, 'data/clusters.json');
+    fs.readFile(clusters, function(err, data) {
+      if(err) {
+        $log.error(err);
+        readClustersDefer.reject(err);
+      }
+      
+      clusters = JSON.parse(data);
+      readClustersDefer.resolve(clusters.clusters);
+      
+    })
     
-</header>
-
-<article>
-    <div class="container-overview">
     
-        
-
     
-
-    <h4 class="name" id="jobStatusService"><span class="type-signature"></span>new jobStatusService<span class="signature">()</span><span class="type-signature"></span></h4>
-
+    console.log("Current Directory = " + process.cwd());
+    console.log(fs.readdirSync(process.cwd()));
     
+    // Initialize the file and id if not initialized
+    readPrefDefer = $q.defer();
+    preferencesDefer = readPrefDefer.promise;
+    var preferences;
+    fs.exists(preferencePath, function(exists) {
+      if(!exists) {
+        ws = fs.createWriteStream(preferencePath);
+        var uuid = require('uuid');       
+        var obj = { uuid : uuid(null,0) };
+        ws.write(JSON.stringify(obj));
+        readPrefDefer.resolve(obj);
+      }
+      else {
+        fs.readFile(preferencePath, function(err, data) {
+          preferences = JSON.parse(data);
+          readPrefDefer.resolve(preferences);
+        })
+      }
+    })
 
-
-
-<div class="description">
-    <p>The jobStatusService allows for periodic loading of the status of jobs that comes from the clusters.</p>
-<p>A Promise with the data is returned, which is then set properly within the controller</p>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
+  }
+  
+  
+  
+  var getClusters = function() {
+    var returnDefer = $q.defer();
+    clustersDefer.then(function(clusters) {
+      returnDefer.resolve(clusters);
+    })
     
-
+    return returnDefer.promise;
     
-
+  }
+  
+  var setClusters = function(clusters) {
     
-
     
-
+  }
+  
+  var addCluster = function(cluster) {
     
-
+  }
+  
+  
+  /**
+   * Get the array of tutorials in the tutorials.json file
+   * This file is distributed with the Application.
+   * @method getTutorials
+   * @memberof PreferencesManager
+   * @returns {Promise.&lt;object>}
+   */
+  var getTutorials = function() {
+    var toReturn = $q.defer();
     
-
+    // Get the path to the tutorials file
+    var path = require("path");
+    var tutorials = path.join(__dirname, 'data/tutorials.json');
     
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jobStatusService.js.html">jobStatusService.js</a>, <a href="jobStatusService.js.html#line3">line 3</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    </div>
-
-    
-
-    
-
-    
-
-     
-
-    
+    // Read in the tutorials file
+    fs.readFile(tutorials, function(err, data) {
+      if (err) {
+        return toReturn.reject(err);
+      }
+      
+      return toReturn.resolve(JSON.parse(data));
+    })
 
     
-
-    
-        <h3 class="subsection-title">Methods</h3>
-
-        
-            
-
-    
-
-    <h4 class="name" id=".refreshDatabase"><span class="type-signature">(static) </span>refreshDatabase<span class="signature">(clusterInterface, clusterId, force)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
-
-    
-
-
-
-<div class="description">
-    <p>Makes asynchronous calls to check for job statuses within the database</p>
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>clusterInterface</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="global.html#GenericClusterInterface">GenericClusterInterface</a></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Used to grab uncompleted jobs from the cluster</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>clusterId</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">integer</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Unique ID of the cluster for querying the database</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>force</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Flag denoting if the user wants to force update the database</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jobStatusService.js.html">jobStatusService.js</a>, <a href="jobStatusService.js.html#line19">line 19</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    <p>Promise object to be resolved in the controller</p>
-</div>
-
-
-
-<dl class="param-type">
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Promise</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-        
-    
-
-    
-
-    
-</article>
-
-</section>
+    return toReturn.promise;
+  }
+  
+  /**
+     * Get the currently set preferences
+     * @method getPreferences
+     * @memberof PreferencesManager
+     * @returns {Promise.&lt;object>}
+     */
+  var getPreferences = function() {
+    var returnDefer = $q.defer();
+    preferencesDefer.then(function(preferences) {
+	  returnDefer.resolve(preferences);
+    })
+    return returnDefer.promise;
+  }
+  /**
+     * Sets 1 or more preferences
+     * @method getPreferences
+     * @memberof PreferencesManager
+     * @param {object} preferences - An object with 1 or more preference pairs
+     * @returns {Promise.&lt;object>}
+     */
+  var setPreferences = function(preference) {
+    var returnDefer = $q.defer();
+    preferencesDefer.then(function(preferences) {
+      fs.readFile(preferencePath, function(err, data) {
+        if(err) {
+          $log.error(err);
+          returnDefer.reject(err);
+        }
+        else {
+          var curPreferences = JSON.parse(data);
+          for(i in preference) {
+          curPreferences[i] = preference[i];
+        }
+        var sw = fs.createWriteStream(preferencePath);
+        sw.write(JSON.stringify(curPreferences));
+        returnDefer.resolve(curPreferences);
+        }
+      })
+    })
+    return returnDefer.promise;
+  }
+  
+  init();
+    return {
+      getClusters: getClusters,
+      setClusters: setClusters,
+      addCluster: addCluster,
+      getPreferences: getPreferences,
+      setPreferences: setPreferences,
+      getTutorials: getTutorials
+      
+    }
+}]);
+  
+</code></pre>
+        </article>
+    </section>
 
 
 

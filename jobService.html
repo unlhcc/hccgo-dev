@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>jobStatusService - Documentation</title>
+    <title>jobService - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -28,7 +28,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">jobStatusService</h1>
+    <h1 class="page-title">jobService</h1>
     
 
     
@@ -41,7 +41,7 @@
 <header>
     
         <h2>
-        jobStatusService
+        jobService
         </h2>
         
     
@@ -54,15 +54,14 @@
 
     
 
-    <h4 class="name" id="jobStatusService"><span class="type-signature"></span>new jobStatusService<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="jobService"><span class="type-signature"></span>new jobService<span class="signature">()</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    <p>The jobStatusService allows for periodic loading of the status of jobs that comes from the clusters.</p>
-<p>A Promise with the data is returned, which is then set properly within the controller</p>
+    <p>Used to manage the job history.</p>
 </div>
 
 
@@ -106,7 +105,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jobStatusService.js.html">jobStatusService.js</a>, <a href="jobStatusService.js.html#line3">line 3</a>
+        <a href="jobHistoryCtrl.js.html">jobHistoryCtrl.js</a>, <a href="jobHistoryCtrl.js.html#line5">line 5</a>
     </li></ul></dd>
     
 
@@ -155,14 +154,25 @@
 
     
 
-    <h4 class="name" id=".refreshDatabase"><span class="type-signature">(static) </span>refreshDatabase<span class="signature">(clusterInterface, clusterId, force)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
+    <h4 class="name" id=".addDBJob"><span class="type-signature">(static) </span>addDBJob<span class="signature">(job)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Makes asynchronous calls to check for job statuses within the database</p>
+    <p>Add a job to the job history
+Required attributes:</p>
+<ul>
+<li>runtime</li>
+<li>memory</li>
+<li>jobname</li>
+<li>location</li>
+<li>error</li>
+<li>output</li>
+<li>modules (Array)</li>
+<li>commands (multi line, with <code>\n</code>s)</li>
+</ul>
 </div>
 
 
@@ -198,13 +208,13 @@
 
         <tr>
             
-                <td class="name"><code>clusterInterface</code></td>
+                <td class="name"><code>job</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#GenericClusterInterface">GenericClusterInterface</a></span>
+<span class="param-type">Object</span>
 
 
             
@@ -214,53 +224,7 @@
 
             
 
-            <td class="description last"><p>Used to grab uncompleted jobs from the cluster</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>clusterId</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">integer</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Unique ID of the cluster for querying the database</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>force</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Flag denoting if the user wants to force update the database</p></td>
+            <td class="description last"><p>The job data structure</p></td>
         </tr>
 
     
@@ -301,7 +265,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jobStatusService.js.html">jobStatusService.js</a>, <a href="jobStatusService.js.html#line19">line 19</a>
+        <a href="jobHistoryCtrl.js.html">jobHistoryCtrl.js</a>, <a href="jobHistoryCtrl.js.html#line55">line 55</a>
     </li></ul></dd>
     
 
@@ -327,10 +291,6 @@
 <h5>Returns:</h5>
 
         
-<div class="param-desc">
-    <p>Promise object to be resolved in the controller</p>
-</div>
-
 
 
 <dl class="param-type">

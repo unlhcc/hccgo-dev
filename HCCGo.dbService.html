@@ -1,4 +1,387 @@
-<!doctype html><html>  <head>    <meta charset="utf-8">    <title>JSDoc: dbService</title>    <link href="css/prettify-tomorrow.css" type="text/css" rel="stylesheet">    <link href="css/site.css" type="text/css" rel="stylesheet">  </head>  <body ng-app="">    <nav id="toc">      <input placeholder="Filter" id="filter-input" class="col12 block field" type="text">      <div class="nav-wrapper">      <h2><a href="index.html">Index</a></h2>      <ul class="module">        <!-- ____o -->        <h2 class="module">          <a chref="" ng-click="module____o = !module____o">            module: HCCGo          </a>          <i ng-cloak="" ng-show="module____o">+</i>        </h2>        <li id="HCCGo" ng-hide="module____o">          <ul class="group">            <h2>              <a href="" ng-click="____oservice = !____oservice">                service              </a>              <i ng-cloak="" ng-show="____oservice">+</i>            </h2>            <ul ng-hide="____oservice">              <li>                <a href="HCCGo.connectionService.html">connectionService</a>              </li><li>                <a href="HCCGo.dataUsageService.html">dataUsageService</a>              </li><li>                <a href="HCCGo.dbService.html">dbService</a>              </li><li>                <a href="HCCGo.filePathService.html">filePathService</a>              </li><li>                <a href="HCCGo.jobStatusService.html">jobStatusService</a>              </li><li>                <a href="HCCGo.notifierService.html">notifierService</a>              </li><li>                <a href="HCCGo.updaterService.html">updaterService</a>              </li>            </ul>          </ul><ul class="group">            <h2>              <a href="" ng-click="____ocontroller = !____ocontroller">                controller              </a>              <i ng-cloak="" ng-show="____ocontroller">+</i>            </h2>            <ul ng-hide="____ocontroller">              <li>                <a href="HCCGo.jobViewCtrl.html">jobViewCtrl</a>              </li><li>                <a href="HCCGo.updaterButtonCtrl.html">updaterButtonCtrl</a>              </li>            </ul>          </ul>        </li>      </ul>      </div>    </nav>    <div id="content" class="page-wrap">      <h3 style="float:right; color:#ccc">        Angular service      </h3>      <h1 class="title">        dbService        <a class="name-link signature-attributes" href="source/HCCGo.dbService.html#line3">source</a>      </h1>      <div id="main" class="big-container">        <!-- source code html -->        <!-- index.html -->        <!-- class files -->        <div>          <div><div class="container-overview">  <ul class="chips">  </ul>  <div class="clearfix"></div>  <div class="description">    <h4>Description</h4>    <p>The dbService provides access to the various DB's.  Additionally,
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>dbService - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="HCCGo.connectionService.html">connectionService</a></li><li><a href="HCCGo.dataUsageService.html">dataUsageService</a><ul class='methods'><li data-type='method'><a href="HCCGo.dataUsageService.html#.getDataUsage">getDataUsage</a></li></ul></li><li><a href="HCCGo.dbService.html">dbService</a><ul class='methods'><li data-type='method'><a href="HCCGo.dbService.html#.getJobHistoryDB">getJobHistoryDB</a></li><li data-type='method'><a href="HCCGo.dbService.html#.getSubmittedJobsDB">getSubmittedJobsDB</a></li></ul></li><li><a href="HCCGo.filePathService.html">filePathService</a><ul class='methods'><li data-type='method'><a href="HCCGo.filePathService.html#.getDataPath">getDataPath</a></li><li data-type='method'><a href="HCCGo.filePathService.html#.getJobHistory">getJobHistory</a></li><li data-type='method'><a href="HCCGo.filePathService.html#.getPreferences">getPreferences</a></li><li data-type='method'><a href="HCCGo.filePathService.html#.getSubmittedJobs">getSubmittedJobs</a></li></ul></li><li><a href="HCCGo.jobStatusService.html">jobStatusService</a><ul class='methods'><li data-type='method'><a href="HCCGo.jobStatusService.html#.refreshDatabase">refreshDatabase</a></li></ul></li><li><a href="HCCGo.jobViewCtrl.html">jobViewCtrl</a><ul class='methods'><li data-type='method'><a href="HCCGo.jobViewCtrl.html#.copyToClipboard">copyToClipboard</a></li><li data-type='method'><a href="HCCGo.jobViewCtrl.html#.downloadRemoteFile">downloadRemoteFile</a></li><li data-type='method'><a href="HCCGo.jobViewCtrl.html#.saveFile">saveFile</a></li></ul></li><li><a href="HCCGo.notifierService.html">notifierService</a><ul class='methods'><li data-type='method'><a href="HCCGo.notifierService.html#.error">error</a></li><li data-type='method'><a href="HCCGo.notifierService.html#.getWinFocus">getWinFocus</a></li><li data-type='method'><a href="HCCGo.notifierService.html#.success">success</a></li><li data-type='method'><a href="HCCGo.notifierService.html#.warning">warning</a></li></ul></li><li><a href="HCCGo.updaterButtonCtrl.html">updaterButtonCtrl</a><ul class='methods'><li data-type='method'><a href="HCCGo.updaterButtonCtrl.html#.restartUpdate">restartUpdate</a></li><li data-type='method'><a href="HCCGo.updaterButtonCtrl.html#.setUpdate">setUpdate</a></li><li data-type='method'><a href="HCCGo.updaterButtonCtrl.html#.updateDialog">updateDialog</a></li></ul></li><li><a href="HCCGo.updaterService.html">updaterService</a><ul class='methods'><li data-type='method'><a href="HCCGo.updaterService.html#.getUpdateDetails">getUpdateDetails</a></li><li data-type='method'><a href="HCCGo.updaterService.html#.hasUpdate">hasUpdate</a></li><li data-type='method'><a href="HCCGo.updaterService.html#.start">start</a></li><li data-type='method'><a href="HCCGo.updaterService.html#.updateRestart">updateRestart</a></li></ul></li><li><a href="jobService.html">jobService</a><ul class='methods'><li data-type='method'><a href="jobService.html#.addDBJob">addDBJob</a></li></ul></li><li><a href="tutorialCtrl.html">tutorialCtrl</a><ul class='methods'><li data-type='method'><a href="tutorialCtrl.html#.getPackageJson">getPackageJson</a></li><li data-type='method'><a href="tutorialCtrl.html#.importSubmitScripts">importSubmitScripts</a></li></ul></li></ul><h3>Tutorials</h3><ul><li><a href="tutorial-writing-tutorials.html">Writing Tutorials</a></li></ul><h3>Global</h3><ul><li><a href="global.html#GenericClusterInterface">GenericClusterInterface</a></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">dbService</h1>
+    
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        dbService
+        </h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+    
+
+    <h4 class="name" id="dbService"><span class="type-signature"></span>new dbService<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>The dbService provides access to the various DB's.  Additionally,
  they allow the loading of the DB's only once, which stops any race conditions of trying to open the DB more than once.</p>
 <p>The DBs returned by the <code>dbService</code> are all nedb Databases.</p>
-<p>Documentation on <a href="https://github.com/louischatriot/nedb">Nedb</a>.</p>  </div>  <div class="details"></div></div><div class="functions">  <h3 class="subsection-title">Methods</h3>  <dl>    <dt>      <a href="" class="name-link" id="getJobHistoryDB">        <h4 class="name">          getJobHistoryDB          <span class="type-signature">            -&gt; nedb          </span>        </h4>      </a>    </dt>    <dd>      <div class="description">        <span>          <p>Get the Job History DB reference.</p>        </span>      </div>      <div>        <h4>Returns</h4>        <table class="params">          <thead>            <tr><th>Type</th><th class="last">Description</th></tr>          </thead>          <tbody>            <tr>              <td class="type">                <span class="param-type">                  <a href="nedb.html">nedb</a>                </span>              </td>              <td class="description last">                <span>                  <p>Nedb (reference) object to query.</p>                </span>              </td>            </tr>          </tbody>        </table>      </div>    </dd>  </dl><dl>    <dt>      <a href="" class="name-link" id="getSubmittedJobsDB">        <h4 class="name">          getSubmittedJobsDB          <span class="type-signature">            -&gt; nedb          </span>        </h4>      </a>    </dt>    <dd>      <div class="description">        <span>          <p>Get the Submitted jobs DB reference.</p>        </span>      </div>      <div>        <h4>Returns</h4>        <table class="params">          <thead>            <tr><th>Type</th><th class="last">Description</th></tr>          </thead>          <tbody>            <tr>              <td class="type">                <span class="param-type">                  <a href="nedb.html">nedb</a>                </span>              </td>              <td class="description last">                <span>                  <p>Nedb (reference) object to query.</p>                </span>              </td>            </tr>          </tbody>        </table>      </div>    </dd>  </dl></div></div>        </div>      </div>      <footer style="clear:both">        Documentation generated by        <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a>        using        <a href="https://github.com/allenhwkim/angular-jsdoc">Angular-JSDoc template</a>      </footer>    </div>    <script src="js/prettify.js"></script>    <script src="js/angular.min.js"></script>    <script src="js/site.js"></script>    <!--%= prettyJson %-->    <script>      prettyPrint();      var lineNo = window.location.hash.match(/#line([0-9]+)$/);      lineNo && document.querySelector("ol li:nth-child("+(lineNo[1])+")").scrollIntoView();    </script>  </body></html>
+<p>Documentation on <a href="https://github.com/louischatriot/nedb">Nedb</a>.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="dbService.js.html">dbService.js</a>, <a href="dbService.js.html#line3">line 3</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id=".getJobHistoryDB"><span class="type-signature">(static) </span>getJobHistoryDB<span class="signature">()</span><span class="type-signature"> &rarr; {nedb}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Get the Job History DB reference.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="dbService.js.html">dbService.js</a>, <a href="dbService.js.html#line73">line 73</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>Nedb (reference) object to query.</p>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">nedb</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".getSubmittedJobsDB"><span class="type-signature">(static) </span>getSubmittedJobsDB<span class="signature">()</span><span class="type-signature"> &rarr; {nedb}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Get the Submitted jobs DB reference.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="dbService.js.html">dbService.js</a>, <a href="dbService.js.html#line83">line 83</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>Nedb (reference) object to query.</p>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">nedb</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Wed Feb 22 2017 21:51:05 GMT+0000 (UTC) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

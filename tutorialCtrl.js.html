@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>tutorialCtrl.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="HCCGo.connectionService.html">connectionService</a></li><li><a href="HCCGo.dataUsageService.html">dataUsageService</a><ul class='methods'><li data-type='method'><a href="HCCGo.dataUsageService.html#.getDataUsage">getDataUsage</a></li></ul></li><li><a href="HCCGo.dbService.html">dbService</a><ul class='methods'><li data-type='method'><a href="HCCGo.dbService.html#.getJobHistoryDB">getJobHistoryDB</a></li><li data-type='method'><a href="HCCGo.dbService.html#.getSubmittedJobsDB">getSubmittedJobsDB</a></li></ul></li><li><a href="HCCGo.filePathService.html">filePathService</a><ul class='methods'><li data-type='method'><a href="HCCGo.filePathService.html#.getDataPath">getDataPath</a></li><li data-type='method'><a href="HCCGo.filePathService.html#.getJobHistory">getJobHistory</a></li><li data-type='method'><a href="HCCGo.filePathService.html#.getPreferences">getPreferences</a></li><li data-type='method'><a href="HCCGo.filePathService.html#.getSubmittedJobs">getSubmittedJobs</a></li></ul></li><li><a href="HCCGo.jobStatusService.html">jobStatusService</a><ul class='methods'><li data-type='method'><a href="HCCGo.jobStatusService.html#.refreshDatabase">refreshDatabase</a></li></ul></li><li><a href="HCCGo.jobViewCtrl.html">jobViewCtrl</a><ul class='methods'><li data-type='method'><a href="HCCGo.jobViewCtrl.html#.copyToClipboard">copyToClipboard</a></li><li data-type='method'><a href="HCCGo.jobViewCtrl.html#.downloadRemoteFile">downloadRemoteFile</a></li><li data-type='method'><a href="HCCGo.jobViewCtrl.html#.saveFile">saveFile</a></li></ul></li><li><a href="HCCGo.notifierService.html">notifierService</a><ul class='methods'><li data-type='method'><a href="HCCGo.notifierService.html#.error">error</a></li><li data-type='method'><a href="HCCGo.notifierService.html#.getWinFocus">getWinFocus</a></li><li data-type='method'><a href="HCCGo.notifierService.html#.success">success</a></li><li data-type='method'><a href="HCCGo.notifierService.html#.warning">warning</a></li></ul></li><li><a href="HCCGo.updaterButtonCtrl.html">updaterButtonCtrl</a><ul class='methods'><li data-type='method'><a href="HCCGo.updaterButtonCtrl.html#.restartUpdate">restartUpdate</a></li><li data-type='method'><a href="HCCGo.updaterButtonCtrl.html#.setUpdate">setUpdate</a></li><li data-type='method'><a href="HCCGo.updaterButtonCtrl.html#.updateDialog">updateDialog</a></li></ul></li><li><a href="HCCGo.updaterService.html">updaterService</a><ul class='methods'><li data-type='method'><a href="HCCGo.updaterService.html#.getUpdateDetails">getUpdateDetails</a></li><li data-type='method'><a href="HCCGo.updaterService.html#.hasUpdate">hasUpdate</a></li><li data-type='method'><a href="HCCGo.updaterService.html#.start">start</a></li><li data-type='method'><a href="HCCGo.updaterService.html#.updateRestart">updateRestart</a></li></ul></li><li><a href="jobService.html">jobService</a><ul class='methods'><li data-type='method'><a href="jobService.html#.addDBJob">addDBJob</a></li></ul></li><li><a href="tutorialCtrl.html">tutorialCtrl</a><ul class='methods'><li data-type='method'><a href="tutorialCtrl.html#.getPackageJson">getPackageJson</a></li><li data-type='method'><a href="tutorialCtrl.html#.importSubmitScripts">importSubmitScripts</a></li></ul></li></ul><h3>Tutorials</h3><ul><li><a href="tutorial-writing-tutorials.html">Writing Tutorials</a></li></ul><h3>Global</h3><ul><li><a href="global.html#GenericClusterInterface">GenericClusterInterface</a></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">tutorialCtrl.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>tutorialModule = angular.module('HccGoApp.tutorialCtrl', ['ngRoute' ]);
+
+
+
+/**
+ * Controller for the tutorials page.
+ * @class tutorialCtrl
+ * @service 
+ *
+ */
+tutorialModule.controller('tutorialCtrl', ['$scope', '$log', '$routeParams', '$location', '$q', 'preferencesManager', 'notifierService', '$http', 'connectionService', '$timeout', 'jobService', function($scope, $log, $routeParams, $location, $q, preferencesManager, notifierService, $http, connectionService, $timeout, jobService) {
+  
+  const async = require("async");
+  const escape = require("escape-html");
+  var init = function() {
+    $(".download-json").addClass("loading");
+    preferencesManager.getTutorials().then(function(jsonTutorials) {
+      $scope.tutorials = jsonTutorials.tutorials;
+      
+      getRepoConfigurations(jsonTutorials.tutorials);
+
+      $timeout(() => $(".download-json").removeClass("loading"), 500);
+    }, function(err) {
+      // Error getting the tutorials
+      if (err) {
+        notifierService.error("Problem reading tutorial file!", "Error");
+        $(".download-json").removeClass("loading");
+      }
+      
+    });
+
+  };
+    
+    // Get the tutorials
+
+  
+  var getRepoConfigurations = function(tutorials) {
+    
+    // For each tutorials
+    async.each(tutorials, function(tutorial) {
+      getPackageJson(tutorial.user, tutorial.repo).then(function(packagedetails){
+        tutorial.name = packagedetails.name;
+        tutorial.version = packagedetails.version;
+        tutorial.description = packagedetails.description;
+        tutorial.submits = packagedetails.submits;
+        tutorial.labels = packagedetails.tags;
+        tutorial.error = null;
+        tutorial.progress = 0;
+      }, function(err) {
+        // If there was an error getting the details
+        tutorial.error = err;
+      });
+
+    });
+    
+    
+  }
+  
+  $scope.click = function(tutorial) {
+    jobService.getDBJobs().then(function(jobs) {
+      // LOGIC HERE FOR CHECKING IF REPO HAS ALREADY BEEN DOWNLOADED
+    });
+    async.series([
+      function(callback) {
+        tutorial.progress = 33;
+        console.log(tutorial.progress);
+        $('#submitprogress').css('width', tutorial.progress+'%').attr('aria-valuenow', tutorial.progress);
+        tutorial.progressMessage = "Clone to cluster...";
+      
+        
+        // Run the git clone
+        connectionService.runCommand("cd $WORK; git clone " + tutorial.gitrepo ).then(function(data){
+          callback(null);
+        }, function(err) {
+          callback(err);
+        });
+      },
+      
+      function(callback) {  
+        tutorial.progress = 66;
+        console.log(tutorial.progress);
+        $('#submitprogress').css('width', tutorial.progress+'%').attr('aria-valuenow', tutorial.progress);
+        tutorial.progressMessage = "Importing job submissions...";
+        importSubmitScripts(tutorial.submits).then(function() {
+          callback(null);
+        }, function(err) {
+          callback(err);
+        });
+        
+        
+
+        // Import job submissions
+      }],
+    
+      function(err, results) {
+        if (err) {
+          tutorial.error = err;
+        }
+        
+        tutorial.progress = 100;
+        console.log(tutorial.progress);
+        $('#submitprogress').css('width', tutorial.progress+'%').attr('aria-valuenow', tutorial.progress);
+        tutorial.progressMessage = "Done!";
+        
+        notifierService.success(tutorial.submits.length + " Jobs imported into Submission DB", "Tutorial Succesfully Imported");
+        $timeout(function() {
+          tutorial.progress = 0;
+        }, 2000);
+          
+      }
+    );
+  }
+  
+  /**
+   * Import the submission scripts from the package.json
+   * @memberof tutorialCtrl
+   * @param {Array} submits Array of submission files 
+   */
+  var importSubmitScripts = function(submits) {
+    var toReturn = $q.defer();
+    
+    async.each(submits, function(submit_script, callback) {
+      jobService.addDBJob(submit_script).then(function() {
+        callback();
+      }, function(err) {
+        callback(err);
+      });
+    }, function(err) {
+      if (err) return toReturn.reject(err);
+      return toReturn.resolve();
+    });
+    
+    return toReturn.promise;
+    
+  }
+  
+  
+  /**
+   * Get the `package.json` file from the github repo to fill in details.
+   * Retrives the package using the `raw.githubusercontent.com` raw link.
+   * @tutorial writing-tutorials
+   * @param {String} user Username of github repo
+   * @param {String} repo Repository name on Github
+   * @memberof tutorialCtrl
+   */
+  var getPackageJson = function(user, repo) {
+    
+    toReturn = $q.defer();
+    url = "https://raw.githubusercontent.com/" + user + "/" + repo + "/master/package.json";
+    
+    $http.get(url).
+      success(function(data, status, headers, config) {
+        toReturn.resolve(data);
+        
+      }).error(function(data, status, headers, config) {
+        toReturn.reject("Failed to get package.json");
+        
+      });
+      
+    return toReturn.promise;
+  }
+  
+  
+  init();
+
+  function sanitizeJSON(unsanitized){	
+    return unsanitized.replace(/\\/g, "\\\\").replace(/\n/g, "\\n").replace(/\r/g, "\\r").replace(/\t/g, "\\t").replace(/\f/g, "\\f").replace(/"/g,"\\\"").replace(/'/g,"\\\'").replace(/\&amp;/g, "\\&amp;"); 
+  }
+}]);</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Wed Feb 22 2017 21:51:05 GMT+0000 (UTC) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>
